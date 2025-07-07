@@ -28,9 +28,9 @@ const BASE_URL = process.env.BASE_URL;
 const proxyDomian = async (req, endpoint, params) => {
   const token = req.headers.authorization?.split(" ")[1];
   const queryParams = new URLSearchParams(params || {}).toString();
-  const url =  `${BASE_URL}/${endpoint}${queryParams ? `?${queryParams}` : ""}`
+  const url = `${BASE_URL}/${endpoint}${queryParams ? `?${queryParams}` : ""}`;
 
-  console.log(url, 'jjj')
+  console.log(url, "actual spotify url");
 
   const res = await fetch(
     `${BASE_URL}${endpoint}${queryParams ? `?${queryParams}` : ""}`,
@@ -68,9 +68,14 @@ const handleError = (res, err) => {
 // 🚨 USER 🚨
 
 // 🚨 TOP TRACKS
-app.get(APIs.topUserTracks, async (req, res) => {
+app.get(APIs.topUserItems.base, async (req, res) => {
+  const items = req.query;
+  const params = {
+    time_range: items?.time_range,
+  };
+
   try {
-    const data = await proxyDomian(req, APIs.topUserTracks);
+    const data = await proxyDomian(req, APIs.topUserItems.api(items), params);
     res.json(data);
   } catch (err) {
     handleError(res, err);
@@ -78,6 +83,17 @@ app.get(APIs.topUserTracks, async (req, res) => {
 });
 
 //////////////
+
+// 🚨 AUDIO 🚨
+app.get(APIs.audioFeature.base, async (req, res) => {
+  const { trackId } = req.query;
+  try {
+    const data = await proxyDomian(req, APIs.audioFeature.api(trackId));
+    res.json(data);
+  } catch (err) {
+    handleError(res, err);
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`API Server running at http://localhost:${PORT}`);
