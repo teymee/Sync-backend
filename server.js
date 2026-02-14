@@ -17,7 +17,7 @@ app.use(
       "https://127.0.0.1:9000",
     ],
     credentials: true,
-  })
+  }),
 );
 
 // 🚨 Variables
@@ -30,7 +30,6 @@ const proxyDomian = async (req, endpoint, params) => {
   const queryParams = new URLSearchParams(params || {}).toString();
   const url = `${BASE_URL}/${endpoint}${queryParams ? `?${queryParams}` : ""}`;
 
-  console.log(url, "actual spotify url");
 
   const res = await fetch(
     `${BASE_URL}${endpoint}${queryParams ? `?${queryParams}` : ""}`,
@@ -41,7 +40,7 @@ const proxyDomian = async (req, endpoint, params) => {
         "Cache-Control": "no-cache",
       },
       params: new URLSearchParams(params || {}),
-    }
+    },
   );
 
   const data = await res.json(); // parse the response body
@@ -67,11 +66,47 @@ const handleError = (res, err) => {
 
 // 🚨 USER 🚨
 
+// 🚨 ARTIST ALBUM
+app.get(APIs.artistAlbums.base, async (req, res) => {
+  console.log(req.query, "there");
+ 
+  const { id } = req.query;
+  const params ={
+    include_groups:'album'
+  }
+  
+
+  try {
+    const data = await proxyDomian(req, APIs.artistAlbums.api(id), params);
+    res.json(data);
+  } catch (err) {
+    handleError(res, err);
+  }
+});
+
+
+// 🚨 ARTIST DETAILS
+app.get(APIs.artistDetails.base, async (req, res) => {
+  console.log(req.query, "there");
+ 
+  const { id } = req.query;
+
+  
+
+  try {
+    const data = await proxyDomian(req, APIs.artistDetails.api(id));
+    res.json(data);
+  } catch (err) {
+    handleError(res, err);
+  }
+});
+
 // 🚨 TOP TRACKS
 app.get(APIs.topUserItems.base, async (req, res) => {
   const items = req.query;
   const params = {
     time_range: items?.time_range,
+    limit:50
   };
 
   try {
