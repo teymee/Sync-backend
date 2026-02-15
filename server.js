@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
-import { APIs } from "../api/index.js";
+import { APIs } from "./api";
 
 dotenv.config();
 
