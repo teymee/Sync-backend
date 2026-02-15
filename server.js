@@ -15,6 +15,7 @@ app.use(
       "https://localhost:9000",
       "http://127.0.0.1:9000",
       "https://127.0.0.1:9000",
+      "https://sync-frontend-26il.vercel.app",
     ],
     credentials: true,
   }),
